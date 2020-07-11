@@ -20,11 +20,6 @@ namespace OOC.Characters
             Transform = GetComponent<Transform>();
         }
 
-        private void Start()
-        {
-            IsOn = true;
-        }
-
         private void Update()
         {
             if (IsOn == false)
@@ -62,6 +57,11 @@ namespace OOC.Characters
         {
             MoveDirecton = Vector2.zero;
             AttackDirection = Vector2.zero;
+        }
+
+        public Vector3 GetPosition()
+        {
+            return Transform.position;
         }
     }
 }

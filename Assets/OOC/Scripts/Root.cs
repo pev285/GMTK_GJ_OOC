@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using OOC.Characters;
+using UnityEngine;
 
 namespace OOC
 {
@@ -6,31 +7,69 @@ namespace OOC
     {
         public static Root Instance { get; private set; }
 
-        private DefaultControls PlayerControls;
+        [SerializeField]
+        public GameObject StartingPlayerBody;
+
+
+        //private Soul PlyaerSoul;
+        private DefaultControls PlayerInput;
+        private PlayerController PlayerController;
 
         private void Awake()
         {
             Instance = this;
 
-            PlayerControls = new DefaultControls();
-            PlayerControls.Enable();
+            CreateControlsObject();
+            SetupPlayer();
+        }
+
+        private void Start()
+        {
+            PlayerController.Unpause();
         }
 
         public DefaultControls GetPlayerInput()
         {
-            return PlayerControls;
+            return PlayerInput;
+        }
+
+        public bool IsPlayerInTheFlesh()
+        {
+            return PlayerController.HasMotor();
+        }
+
+        public Vector3 GetPlayerPosition()
+        {
+            return PlayerController.GetPosition();
         }
 
 
+        private void SetupPlayer()
+        {
+            var motor = StartingPlayerBody.GetComponent<IMotor>();
+            if (motor == null)
+                motor = StartingPlayerBody.AddComponent<HumanMotor>();
+
+            PlayerController = new PlayerController(PlayerInput);
+            PlayerController.Possess(motor);
+        }
+
+        private void CreateControlsObject()
+        {
+            PlayerInput = new DefaultControls();
+            PlayerInput.Enable();
+        }
 
         private void Pause()
         {
-            PlayerControls.Player.Disable();
+            PlayerController.Pause();
+            PlayerInput.Player.Disable();
         }
 
         private void Unpause()
         {
-            PlayerControls.Player.Enable();
+            PlayerController.Unpause();
+            PlayerInput.Player.Enable();
         }
     }
 }

@@ -2,26 +2,25 @@
 
 namespace OOC.Characters
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController
     {
         private IMotor Motor;
         private DefaultControls Controls;
 
-        private void Awake()
+        public PlayerController(DefaultControls controls)
         {
-            if (Motor == null)
-                Motor = GetComponent<IMotor>();
-        }
-
-        private void Start()
-        {
-            SubscribeInput();
-        }
-
-        private void SubscribeInput()
-        {
-            Controls = Root.Instance.GetPlayerInput();
+            Controls = controls;
             Controls.Player.Move.performed += Move_performed;
+        }
+
+        public void Possess(IMotor motor)
+        {
+            Motor = motor;
+        }
+
+        public void Unpossess()
+        {
+            Motor = null;
         }
 
         private void Move_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -35,6 +34,34 @@ namespace OOC.Characters
             Debug.Log($"Direction={direction}");
         }
 
+        public void Pause()
+        {
+            if (Motor == null)
+                return;
+
+            Motor.TurnOn(false);
+        }
+
+        public void Unpause()
+        {
+            if (Motor == null)
+                return;
+
+            Motor.TurnOn(true);
+        }
+
+        public Vector3 GetPosition()
+        {
+            if (Motor == null)
+                return Vector3.zero;
+
+            return Motor.GetPosition();
+        }
+
+        public bool HasMotor()
+        {
+            return Motor != null;
+        }
     }
 }
 

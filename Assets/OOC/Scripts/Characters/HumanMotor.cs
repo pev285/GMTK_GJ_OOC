@@ -8,7 +8,8 @@ namespace OOC.Characters
         public float Speed = 5f;
 
         private bool IsOn = false;
-        private Transform Transform;
+        //private Transform Transform;
+        private Rigidbody2D RB;
 
 
         private Vector2 MoveDirecton;
@@ -17,10 +18,16 @@ namespace OOC.Characters
         private void Awake()
         {
             ResetControlVectors();
-            Transform = GetComponent<Transform>();
+            //Transform = GetComponent<Transform>();
+            RB = GetComponent<Rigidbody2D>();
         }
 
         private void Update()
+        {
+            //Transform.position = Transform.position + (Vector3)shift;
+        }
+
+        private void FixedUpdate()
         {
             if (IsOn == false)
                 return;
@@ -28,7 +35,7 @@ namespace OOC.Characters
             var coeff = Speed * Time.deltaTime;
             var shift = coeff * MoveDirecton;
 
-            Transform.position = Transform.position + (Vector3)shift;
+            RB.MovePosition(RB.position + shift);
         }
 
         public void Attack(Vector2 direction)
@@ -61,7 +68,7 @@ namespace OOC.Characters
 
         public Vector3 GetPosition()
         {
-            return Transform.position;
+            return RB.position;
         }
     }
 }

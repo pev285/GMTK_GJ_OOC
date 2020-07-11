@@ -139,6 +139,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e907e12b0c216d5499b13cc225b23592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  StopDistance: 1
+  PathUpdatePeriod: 0.5
+--- !u!114 &17145749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 17145742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  drawGizmos: 1
+  detailedGizmos: 0
+  startEndModifier:
+    addPoints: 0
+    exactStartPoint: 3
+    exactEndPoint: 3
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  graphMask:
+    value: -1
 --- !u!1 &45379823
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,7 +275,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: fddea46eb101b3b4a9bd64fdb1efd82b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.34901962, g: 0.21960784, b: 0.21568628, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -391,7 +421,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.3764706, g: 0.827451, b: 0.5803922, a: 0}
+  m_BackGroundColor: {r: 0.003921569, g: 0.5568628, b: 0.25882354, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -544,7 +574,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: fddea46eb101b3b4a9bd64fdb1efd82b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.34901962, g: 0.21960784, b: 0.21568628, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -705,6 +735,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8614892382257371638, guid: a673a7f2c687da348a7aa8ca4bde3772,
+        type: 3}
+      propertyPath: Speed
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a673a7f2c687da348a7aa8ca4bde3772, type: 3}
 --- !u!1 &1939281838 stripped
@@ -725,6 +760,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e907e12b0c216d5499b13cc225b23592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  StopDistance: 1
+  PathUpdatePeriod: 0.3
 --- !u!114 &1939281845
 MonoBehaviour:
   m_ObjectHideFlags: 0

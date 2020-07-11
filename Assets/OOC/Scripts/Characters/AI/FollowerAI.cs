@@ -1,4 +1,6 @@
 ﻿using DG.Tweening;
+using Pathfinding;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,55 +8,94 @@ namespace OOC.Characters.AI
 {
     public class FollowerAI : AIBase
     {
-        private float Speed = 3f;
-        private Vector2 Destination;
+        [SerializeField]
+        private float StopDistance = 1f;
+        [SerializeField]
+        private float PathUpdatePeriod = 0.5f;
 
-        //private Transform Transform;
+
+        private IMotor Motor;
+
+        private Seeker Seeker;
         private Rigidbody2D RB;
 
-        private Tweener CurrentTween;
+        private Path Path;
+        private int CurrentWaypoint;
 
         private void Awake()
         {
+            Seeker = GetComponent<Seeker>();
             RB = GetComponent<Rigidbody2D>();
-            //Transform = GetComponent<Transform>();
         }
 
         private void Start()
         {
-            Destination = RB.position;
+            Motor = GetComponent<IMotor>();
 
-            StartCoroutine(DecisionCorutine());
+            Motor.TurnOn(true);
+            StartCoroutine(UpdatePathCoroutine());
         }
 
-        private IEnumerator DecisionCorutine()
+        #region Path check and seek
+
+        private IEnumerator UpdatePathCoroutine()
         {
             while (true)
             {
-                Destination = Root.Instance.GetPlayerPosition();
+                if (IsWorking && Seeker.IsDone() /*&& Path == null*/)
+                    SeekNewPath();
 
-                var delta = (Destination - RB.position).magnitude;
-                //if (delta == 0)
-                //    return;
-
-                var time = delta / Speed;
-
-
-                if (CurrentTween != null)
-                    CurrentTween.Kill();
-                CurrentTween = RB.DOMove(Destination, time);
-                //var direction = (Destination - Transform.position).normalized;
-
-
-                yield return new WaitForSeconds(0.3f);
+                yield return new WaitForSeconds(PathUpdatePeriod);
             }
         }
 
+        private void SeekNewPath()
+        {
+            var destination = Root.Instance.GetPlayerPosition();
+            Seeker.StartPath(RB.position, destination, OnPathComplete);
+        }
+
+        private void OnPathComplete(Path path)
+        {
+            if (path.error)
+                return;
+
+            Path = path;
+            CurrentWaypoint = 0;
+        }
+
+        #endregion
+
+
         private void Update()
         {
+            if (Motor == null)
+                return;
+
             if (IsWorking == false)
                 return;
 
+            if (Path == null)
+                return;
+
+            if (CurrentWaypoint >= Path.vectorPath.Count)
+            {
+                Motor.Move(Vector2.zero);
+                Path = null;
+                return;
+            }
+
+
+            Vector2 point = (Vector2)Path.vectorPath[CurrentWaypoint];
+
+            var vectorToNextPoint = point - RB.position;
+            var distance = vectorToNextPoint.magnitude;
+            var direction = vectorToNextPoint / distance;
+
+            if (distance <= StopDistance)
+                CurrentWaypoint++;
+            else
+                Motor.Move(direction);
         }
     }
 }

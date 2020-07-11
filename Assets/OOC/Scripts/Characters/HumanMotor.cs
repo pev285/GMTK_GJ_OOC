@@ -7,9 +7,8 @@ namespace OOC.Characters
     {
         public float Speed = 5f;
 
-        private bool IsOn = false;
-        //private Transform Transform;
         private Rigidbody2D RB;
+        private bool IsOn = false;
 
 
         private Vector2 MoveDirecton;
@@ -18,13 +17,7 @@ namespace OOC.Characters
         private void Awake()
         {
             ResetControlVectors();
-            //Transform = GetComponent<Transform>();
             RB = GetComponent<Rigidbody2D>();
-        }
-
-        private void Update()
-        {
-            //Transform.position = Transform.position + (Vector3)shift;
         }
 
         private void FixedUpdate()

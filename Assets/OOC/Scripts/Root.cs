@@ -1,4 +1,6 @@
 ﻿using OOC.Characters;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace OOC
@@ -8,25 +10,28 @@ namespace OOC
         public static Root Instance { get; private set; }
 
         [SerializeField]
+        private Soul PlayerSoul;
+        [SerializeField]
         public GameObject StartingPlayerBody;
 
 
-        //private Soul PlyaerSoul;
         private DefaultControls PlayerInput;
-        private PlayerController PlayerController;
+        //private PlayerController PlayerController;
+
+
 
         private void Awake()
         {
             Instance = this;
 
             CreateControlsObject();
-            SetupPlayer();
         }
 
         private void Start()
         {
-            PlayerController.Unpause();
+            SetupPlayer();
         }
+
 
         public DefaultControls GetPlayerInput()
         {
@@ -35,12 +40,12 @@ namespace OOC
 
         public bool IsPlayerInTheFlesh()
         {
-            return PlayerController.HasMotor();
+            return PlayerSoul.IsInTheFlesh();
         }
 
         public Vector3 GetPlayerPosition()
         {
-            return PlayerController.GetPosition();
+            return PlayerSoul.PlayerController.GetPosition();
         }
 
 
@@ -48,10 +53,11 @@ namespace OOC
         {
             var motor = StartingPlayerBody.GetComponent<IMotor>();
             if (motor == null)
-                motor = StartingPlayerBody.AddComponent<HumanMotor>();
+                StartingPlayerBody.AddComponent<HumanMotor>();
 
-            PlayerController = new PlayerController(PlayerInput);
-            PlayerController.Possess(motor);
+            var controller = new PlayerController(PlayerInput);
+            PlayerSoul.SetPlayerController(controller);
+            PlayerSoul.AttachToBody(StartingPlayerBody.transform);
         }
 
         private void CreateControlsObject()
@@ -62,13 +68,13 @@ namespace OOC
 
         private void Pause()
         {
-            PlayerController.Pause();
+            PlayerSoul.Pause();
             PlayerInput.Player.Disable();
         }
 
         private void Unpause()
         {
-            PlayerController.Unpause();
+            PlayerSoul.Unpause();
             PlayerInput.Player.Enable();
         }
     }

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace OOC.Characters.AI
 {
-    public class FollowerAIController : AIBase
+    public class FollowerAIController : ControllerBase
     {
         [SerializeField]
         private float StopDistance = 1f;
@@ -14,25 +14,22 @@ namespace OOC.Characters.AI
         private float PathUpdatePeriod = 0.5f;
 
 
-        private IMotor Motor;
-
         private Seeker Seeker;
         private Rigidbody2D RB;
 
         private Path Path;
         private int CurrentWaypoint;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+
             Seeker = GetComponent<Seeker>();
             RB = GetComponent<Rigidbody2D>();
         }
 
         private void Start()
         {
-            Motor = GetComponent<IMotor>();
-
-            Motor.TurnOn(true);
             StartCoroutine(UpdatePathCoroutine());
         }
 

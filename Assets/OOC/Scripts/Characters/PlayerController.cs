@@ -2,10 +2,12 @@
 
 namespace OOC.Characters
 {
-    public class PlayerController
+    public class PlayerController : IController
     {
         private IMotor Motor;
         private DefaultControls Controls;
+
+        private bool IsWorking = true;
 
         public PlayerController(DefaultControls controls)
         {
@@ -19,28 +21,36 @@ namespace OOC.Characters
             Debug.Log($"Jump act: {obj.ReadValueAsButton()}");
         }
 
+        public void TurnOn(bool on)
+        {
+            IsWorking = on;
+
+            if (IsWorking)
+                UnpauseMotor();
+            else
+                PauseMotor();
+        }
+
+
         public void Possess(IMotor motor)
         {
             Motor = motor;
+
+            if (Motor != null)
+                Motor.TurnOn(true);
         }
+
 
         public void Unpossess()
-        {
-            Motor = null;
-        }
-
-        private void Move_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
         {
             if (Motor == null)
                 return;
 
-            var direction = obj.ReadValue<Vector2>();
-            Motor.Move(direction);
-
-            //Debug.Log($"Control direction={direction}");
+            Motor.TurnOn(false);
+            Motor = null;
         }
 
-        public void Pause()
+        public void PauseMotor()
         {
             if (Motor == null)
                 return;
@@ -48,12 +58,23 @@ namespace OOC.Characters
             Motor.TurnOn(false);
         }
 
-        public void Unpause()
+        public void UnpauseMotor()
         {
             if (Motor == null)
                 return;
 
             Motor.TurnOn(true);
+        }
+
+        private void Move_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            if (Motor == null || IsWorking == false)
+                return;
+
+            var direction = obj.ReadValue<Vector2>();
+            Motor.Move(direction);
+
+            //Debug.Log($"Control direction={direction}");
         }
 
         public Vector3 GetPosition()
@@ -68,6 +89,7 @@ namespace OOC.Characters
         {
             return Motor != null;
         }
+
     }
 }
 

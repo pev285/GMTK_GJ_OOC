@@ -1,4 +1,6 @@
 ﻿using DG.Tweening;
+using OOC.Collectables;
+using System;
 using System.Linq.Expressions;
 using UnityEngine;
 
@@ -16,6 +18,8 @@ namespace OOC.Characters
 
         private Vector2 MoveDirecton;
         private Vector2 AttackDirection;
+
+        public event Action<Potion> OnPotionFound = (a) => { };
 
         private void Awake()
         {
@@ -45,8 +49,16 @@ namespace OOC.Characters
             if (MoveDirecton == Vector2.zero)
                 return;
 
-            var q = Quaternion.LookRotation(MoveDirecton, Vector3.back);
-            RB.MoveRotation(q);
+            var currentRotation = RB.rotation % 360;
+            var targetRotation = Quaternion.LookRotation(MoveDirecton, Vector3.back);
+
+            //fromto
+
+            //Debug.Log($"cur={currentRotation}, tar={targetRotation.eulerAngles.z}");
+
+            //var rotation = Mathf.Lerp(currentRotation, targetRotation, 0.3f);
+
+            RB.MoveRotation(targetRotation);
         }
 
         private void CommandRotate()
@@ -73,9 +85,20 @@ namespace OOC.Characters
 
 
 
-
             RotationTweener = RB.DORotate(angle, RotationDuration);
         }
+
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            var potion = collision.GetComponent<Potion>();
+            if (potion == null)
+                return;
+
+            OnPotionFound(potion);
+        }
+
+
 
         public void Attack(Vector2 direction)
         {

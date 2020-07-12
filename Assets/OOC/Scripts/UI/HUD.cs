@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace OOC
+namespace OOC.UI
 {
     public class HUD : MonoBehaviour
     {

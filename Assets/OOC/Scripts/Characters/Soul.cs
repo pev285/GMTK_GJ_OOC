@@ -1,5 +1,9 @@
-﻿using DG.Tweening;
+﻿using Cinemachine;
+using DG.Tweening;
 using OOC.Characters.AI;
+using OOC.Collectables;
+using OOC.UI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +13,7 @@ namespace OOC.Characters
     public class Soul : MonoBehaviour
     {
         public HUD HUD;
+        public CinemachineVirtualCamera Camera;
 
         public float SwitchBodyTime = 0.2f;
         public float NewBodySearchDistance = 20f;
@@ -46,11 +51,12 @@ namespace OOC.Characters
 
             CheckAndSwitchBody();
 
-            if (SwitchingBodyTweener.IsActive() && SwitchingBodyTweener.IsComplete() == false)
+            if (SwitchingBodyTweener!= null && SwitchingBodyTweener.IsActive() && SwitchingBodyTweener.IsComplete() == false)
                 return;
 
-            Transform.position = Body.position;
 
+
+            Transform.position = Vector3.Slerp(Transform.position, Body.position, 0.1f);
         }
 
 
@@ -85,8 +91,22 @@ namespace OOC.Characters
 
         private void TakeOverBody(Transform body, IMotor motor)
         {
+            motor.OnPotionFound += UsePotion;
+
             Body = body;
-            SwitchingBodyTweener = Transform.DOMove(Body.position, SwitchBodyTime);
+
+            if (Transform != null)
+                SwitchingBodyTweener = Transform.DOMove(Body.position, SwitchBodyTime);
+
+            //Transform.DOMove()
+
+            float closeLens = 7;
+            float farLens = 10;
+
+            var sequence = DOTween.Sequence();
+            sequence.Append(DOTween.To(x => Camera.m_Lens.OrthographicSize = x, closeLens, farLens, SwitchBodyTime))
+                .Append(DOTween.To(x => Camera.m_Lens.OrthographicSize = x, farLens, closeLens, SwitchBodyTime));
+            
 
             var controller = Body.GetComponent<ControllerBase>();
             if (controller != null)
@@ -99,10 +119,23 @@ namespace OOC.Characters
             PlayerController.Unpossess();
             if (Body != null)
             {
+                var motor = Body.GetComponent<IMotor>();
+                motor.OnPotionFound -= UsePotion;
+
                 var aictrl = Body.GetComponent<ControllerBase>();
                 if (aictrl != null)
                     aictrl.Stun();
             }
+        }
+
+        private void UsePotion(Potion potion)
+        {
+            OneBodyTime -= potion.OneBodyTimeDecrease;
+            if (OneBodyTime < 0) OneBodyTime = 0;
+
+            OneBodyPeriod += potion.OneBodyPeriodIncrease;
+
+            Destroy(potion.gameObject);
         }
 
         public bool IsInTheFlesh()
@@ -131,7 +164,7 @@ namespace OOC.Characters
 
             while (results.Count > 0)
             {
-                int index = Random.Range(0, results.Count);
+                int index = UnityEngine.Random.Range(0, results.Count);
                 var r = results[index];
 
                 var motor = r.GetComponent<IMotor>();

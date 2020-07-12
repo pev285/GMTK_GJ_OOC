@@ -1,9 +1,13 @@
-﻿using UnityEngine;
+﻿using OOC.Collectables;
+using System;
+using UnityEngine;
 
 namespace OOC.Characters
 {
     public interface IMotor 
     {
+        event Action<Potion> OnPotionFound;
+
         void TurnOn(bool on);
         Vector3 GetPosition();
 

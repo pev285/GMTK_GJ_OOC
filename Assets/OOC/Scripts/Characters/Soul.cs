@@ -103,7 +103,7 @@ namespace OOC.Characters
             //Transform.DOMove()
 
             float closeLens = 7;
-            float farLens = 10;
+            float farLens = 12;
 
             var sequence = DOTween.Sequence();
             sequence.Append(DOTween.To(x => Camera.m_Lens.OrthographicSize = x, closeLens, farLens, SwitchBodyTime))

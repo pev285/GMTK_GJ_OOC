@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace OOC.Characters.AI
 {
-    public class FollowerAI : AIBase
+    public class FollowerAIController : AIBase
     {
         [SerializeField]
         private float StopDistance = 1f;

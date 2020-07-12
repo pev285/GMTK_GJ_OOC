@@ -11,6 +11,12 @@ namespace OOC.Characters
         {
             Controls = controls;
             Controls.Player.Move.performed += Move_performed;
+            Controls.Player.Jump.performed += Jump_performed;
+        }
+
+        private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            Debug.Log($"Jump act: {obj.ReadValueAsButton()}");
         }
 
         public void Possess(IMotor motor)
@@ -31,7 +37,7 @@ namespace OOC.Characters
             var direction = obj.ReadValue<Vector2>();
             Motor.Move(direction);
 
-            Debug.Log($"Direction={direction}");
+            //Debug.Log($"Control direction={direction}");
         }
 
         public void Pause()

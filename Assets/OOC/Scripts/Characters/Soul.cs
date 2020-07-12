@@ -9,10 +9,11 @@ namespace OOC.Characters
     public class Soul : MonoBehaviour
     {
         public float SwitchBodyTime = 0.2f;
-        public float UnpossessedStunTime = 2f;
 
-        public float LifeInOneBodyPeriod = 3f;
         public float NewBodySearchDistance = 20f;
+
+        public float OneBodyTime { get; private set; }
+        public float OneBodyPeriod = 3f;
 
         public PlayerController PlayerController { get; private set; }
 
@@ -36,20 +37,38 @@ namespace OOC.Characters
 
         private void Update()
         {
+            if (PlayerController == null)
+                return;
+
             if (Body == null)
                 return;
+
+            CheckAndSwitchBody();
 
             if (SwitchingBodyTweener.IsActive() && SwitchingBodyTweener.IsComplete() == false)
                 return;
 
             Transform.position = Body.position;
+
         }
+
 
         public void SetPlayerController(PlayerController controller)
         {
             PlayerController = controller;
-            StartCoroutine(BodySwitchCoroutine());
         }
+
+        private void CheckAndSwitchBody()
+        {
+            OneBodyTime += Time.deltaTime;
+            if (OneBodyTime < OneBodyPeriod)
+                return;
+
+            SwitchBody();
+        }
+
+
+
 
         public void AttachToBody(Transform newBody)
         {
@@ -79,14 +98,8 @@ namespace OOC.Characters
             {
                 var aictrl = Body.GetComponent<ControllerBase>();
                 if (aictrl != null)
-                    StartCoroutine(DelayedTurnOn(aictrl));
+                    aictrl.Stun();
             }
-        }
-
-        private IEnumerator DelayedTurnOn(ControllerBase controller)
-        {
-            yield return new WaitForSeconds(UnpossessedStunTime);
-            controller.TurnOn(true);
         }
 
         public bool IsInTheFlesh()
@@ -102,52 +115,34 @@ namespace OOC.Characters
         public void Unpause()
         {
             PlayerController.UnpauseMotor();
-
         }
-
-        private IEnumerator BodySwitchCoroutine()
-        {
-            while (true)
-            {
-                SwitchBody();
-                yield return new WaitForSeconds(LifeInOneBodyPeriod);
-            }
-        }
-
 
         private void SwitchBody()
         {
             Debug.Log("Switching");
+            OneBodyTime = 0;
 
             var results = new List<Collider2D>();
             var position = Root.Instance.GetPlayerPosition();
-
-
             Physics2D.OverlapCircle(position, NewBodySearchDistance, ContactFilter, results);
 
-            foreach (var r in results)
+            while (results.Count > 0)
             {
-                var motor = r.GetComponent<IMotor>();
+                int index = Random.Range(0, results.Count);
+                var r = results[index];
 
+                var motor = r.GetComponent<IMotor>();
                 if (motor == null)
                     continue;
 
                 var newBody = r.transform;
-
                 if (Body == newBody)
                     continue;
 
                 AttachToBody(newBody);
-                //motor.TurnOn(true);
-                //PlayerController.Unpossess();
-                //PlayerController.Possess(motor);
-                break;
+                return;
             }
-
         }
-
-
-
     }
 }
 

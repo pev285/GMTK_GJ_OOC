@@ -1,12 +1,18 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using System.Collections;
+using UnityEngine;
 
 namespace OOC.Characters.AI
 {
     public class ControllerBase : MonoBehaviour, IController
     {
-        protected bool IsWorking = true;
+        private Coroutine StunCoroutineRef;
+        private float UnpossessedStunTime = 2f;
 
         protected IMotor Motor;
+        protected bool IsWorking = true;
+
+
 
         protected virtual void Awake()
         {
@@ -19,9 +25,18 @@ namespace OOC.Characters.AI
             IsWorking = on;
 
             if (IsWorking)
+            {
+                if (StunCoroutineRef != null)
+                    StopCoroutine(StunCoroutineRef);
+
+                StunCoroutineRef = null;
                 UnpauseMotor();
+            }
             else
+            {
                 PauseMotor();
+
+            }
         }
 
         private void PauseMotor()
@@ -58,6 +73,19 @@ namespace OOC.Characters.AI
             Motor = null;
         }
 
+
+        public void Stun()
+        {
+            StunCoroutineRef = StartCoroutine(DelayedTurnOn());
+        }
+
+        private IEnumerator DelayedTurnOn()
+        {
+            yield return new WaitForSeconds(UnpossessedStunTime);
+            TurnOn(true);
+
+            StunCoroutineRef = null;
+        }
     }
 }
 

@@ -9,12 +9,26 @@ namespace OOC.Characters
 
         private bool IsWorking = true;
 
+        private Vector2 LastMoveDirection;
+
         public PlayerController(DefaultControls controls)
         {
             Controls = controls;
             Controls.Player.Move.performed += Move_performed;
             Controls.Player.Jump.performed += Jump_performed;
         }
+
+        private void Move_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+        {
+            if (Motor == null || IsWorking == false)
+                return;
+
+            LastMoveDirection = obj.ReadValue<Vector2>();
+            Motor.Move(LastMoveDirection);
+
+            //Debug.Log($"Control direction={direction}");
+        }
+
 
         private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
         {
@@ -36,8 +50,11 @@ namespace OOC.Characters
         {
             Motor = motor;
 
-            if (Motor != null)
-                Motor.TurnOn(true);
+            if (Motor == null)
+                return;
+
+            Motor.TurnOn(true);
+            Motor.Move(LastMoveDirection);
         }
 
 
@@ -64,17 +81,6 @@ namespace OOC.Characters
                 return;
 
             Motor.TurnOn(true);
-        }
-
-        private void Move_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-        {
-            if (Motor == null || IsWorking == false)
-                return;
-
-            var direction = obj.ReadValue<Vector2>();
-            Motor.Move(direction);
-
-            //Debug.Log($"Control direction={direction}");
         }
 
         public Vector3 GetPosition()

@@ -624,6 +624,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd9e112176c2fa044bd25beaf57c5117, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SwitchBodyTime: 0.2
+  UnpossessedStunTime: 2
+  LifeInOneBodyPeriod: 3
+  NewBodySearchDistance: 10
   BodiesMask:
     serializedVersion: 2
     m_Bits: 512

@@ -8,9 +8,11 @@ namespace OOC.Characters
 {
     public class Soul : MonoBehaviour
     {
-        public float LifeInOneBodyPeriod = 3f;
-        public float NewBodySearchDistance = 10f;
         public float SwitchBodyTime = 0.2f;
+        public float UnpossessedStunTime = 2f;
+
+        public float LifeInOneBodyPeriod = 3f;
+        public float NewBodySearchDistance = 20f;
 
         public PlayerController PlayerController { get; private set; }
 
@@ -55,21 +57,36 @@ namespace OOC.Characters
             if (motor == null)
                 return;
 
-            PlayerController.Unpossess();
-            if (Body != null)
-            {
-                var aictrl = Body.GetComponent<ControllerBase>();
-                if (aictrl != null)
-                    aictrl.TurnOn(true);
-            }
+            FreeBody();
+            TakeOverBody(newBody, motor);
+        }
 
-            Body = newBody;
+        private void TakeOverBody(Transform body, IMotor motor)
+        {
+            Body = body;
             SwitchingBodyTweener = Transform.DOMove(Body.position, SwitchBodyTime);
 
             var controller = Body.GetComponent<ControllerBase>();
             if (controller != null)
                 controller.TurnOn(false);
             PlayerController.Possess(motor);
+        }
+
+        private void FreeBody()
+        {
+            PlayerController.Unpossess();
+            if (Body != null)
+            {
+                var aictrl = Body.GetComponent<ControllerBase>();
+                if (aictrl != null)
+                    StartCoroutine(DelayedTurnOn(aictrl));
+            }
+        }
+
+        private IEnumerator DelayedTurnOn(ControllerBase controller)
+        {
+            yield return new WaitForSeconds(UnpossessedStunTime);
+            controller.TurnOn(true);
         }
 
         public bool IsInTheFlesh()

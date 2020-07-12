@@ -29,7 +29,7 @@ namespace OOC.Characters
                 return;
 
             CommandMove();
-            CommandRotate();
+            CommandRotate2();
         }
 
         private void CommandMove()
@@ -38,6 +38,15 @@ namespace OOC.Characters
             var shift = coeff * MoveDirecton;
 
             RB.MovePosition(RB.position + shift);
+        }
+
+        private void CommandRotate2()
+        {
+            if (MoveDirecton == Vector2.zero)
+                return;
+
+            var q = Quaternion.LookRotation(MoveDirecton, Vector3.back);
+            RB.MoveRotation(q);
         }
 
         private void CommandRotate()
@@ -60,7 +69,8 @@ namespace OOC.Characters
             //curRotation.ToAngleAxis(out angle, out axis);
 
             if (axis.z < 0)
-                angle = 360 - angle;
+                angle = -angle;
+
 
 
 

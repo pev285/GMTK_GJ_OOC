@@ -8,8 +8,9 @@ namespace OOC.Characters
 {
     public class Soul : MonoBehaviour
     {
-        public float SwitchBodyTime = 0.2f;
+        public HUD HUD;
 
+        public float SwitchBodyTime = 0.2f;
         public float NewBodySearchDistance = 20f;
 
         public float OneBodyTime { get; private set; }
@@ -61,6 +62,8 @@ namespace OOC.Characters
         private void CheckAndSwitchBody()
         {
             OneBodyTime += Time.deltaTime;
+            HUD.SetJumpProgress(OneBodyTime / OneBodyPeriod);
+
             if (OneBodyTime < OneBodyPeriod)
                 return;
 

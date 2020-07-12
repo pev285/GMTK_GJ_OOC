@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace OOC.Characters
 {
@@ -91,6 +92,7 @@ namespace OOC.Characters
 
         private void TakeOverBody(Transform body, IMotor motor)
         {
+            motor.OnExitFound += Exit;
             motor.OnPotionFound += UsePotion;
 
             Body = body;
@@ -120,12 +122,19 @@ namespace OOC.Characters
             if (Body != null)
             {
                 var motor = Body.GetComponent<IMotor>();
+
+                motor.OnExitFound -= Exit;
                 motor.OnPotionFound -= UsePotion;
 
                 var aictrl = Body.GetComponent<ControllerBase>();
                 if (aictrl != null)
                     aictrl.Stun();
             }
+        }
+
+        private void Exit()
+        {
+            SceneManager.LoadScene(2);
         }
 
         private void UsePotion(Potion potion)

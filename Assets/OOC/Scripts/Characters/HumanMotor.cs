@@ -19,6 +19,7 @@ namespace OOC.Characters
         private Vector2 MoveDirecton;
         private Vector2 AttackDirection;
 
+        public event Action OnExitFound = () => { };
         public event Action<Potion> OnPotionFound = (a) => { };
 
         private void Awake()
@@ -92,10 +93,12 @@ namespace OOC.Characters
         private void OnTriggerEnter2D(Collider2D collision)
         {
             var potion = collision.GetComponent<Potion>();
-            if (potion == null)
-                return;
+            if (potion != null)
+                OnPotionFound(potion);
 
-            OnPotionFound(potion);
+            var exit = collision.GetComponent<Exit>();
+            if (exit != null)
+                OnExitFound();
         }
 
 

@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/OOC/Scenes/LevelScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/OOC/Scenes/ExitScene.unity
+    guid: dac9156ac84bd4847a228e82be5e0121
   m_configObjects: {}

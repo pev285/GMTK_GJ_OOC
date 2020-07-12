@@ -6,6 +6,7 @@ namespace OOC.Characters
 {
     public interface IMotor 
     {
+        event Action OnExitFound;
         event Action<Potion> OnPotionFound;
 
         void TurnOn(bool on);

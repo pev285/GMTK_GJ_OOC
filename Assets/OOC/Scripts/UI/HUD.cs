@@ -11,7 +11,6 @@ namespace OOC.UI
         public void SetJumpProgress(float value)
         {
             JumpProgressBar.value = value;
-            Debug.Log($"value={value}, out value = {JumpProgressBar.value}");
         }
     }
 }

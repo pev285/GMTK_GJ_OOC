@@ -177,12 +177,13 @@ namespace OOC.Characters
                 var r = results[index];
 
                 var motor = r.GetComponent<IMotor>();
-                if (motor == null)
-                    continue;
-
                 var newBody = r.transform;
-                if (Body == newBody)
+
+                if (motor == null || Body == newBody)
+                {
+                    results.RemoveAt(index);
                     continue;
+                }
 
                 AttachToBody(newBody);
                 return;

@@ -25,10 +25,6 @@ namespace OOC
             Instance = this;
 
             CreateControlsObject();
-        }
-
-        private void Start()
-        {
             SetupPlayer();
         }
 

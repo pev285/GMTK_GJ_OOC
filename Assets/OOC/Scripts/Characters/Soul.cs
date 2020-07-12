@@ -1,4 +1,5 @@
-﻿using OOC.Characters.AI;
+﻿using DG.Tweening;
+using OOC.Characters.AI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,8 +8,9 @@ namespace OOC.Characters
 {
     public class Soul : MonoBehaviour
     {
-        private const float LifeInOneBodyPeriod = 3f;
-        private const float NewBodySearchDistance = 10f;
+        public float LifeInOneBodyPeriod = 3f;
+        public float NewBodySearchDistance = 10f;
+        public float SwitchBodyTime = 0.2f;
 
         public PlayerController PlayerController { get; private set; }
 
@@ -17,6 +19,8 @@ namespace OOC.Characters
 
         private Transform Body;
         private Transform Transform;
+
+        private Tweener SwitchingBodyTweener;
 
         private void Awake()
         {
@@ -31,6 +35,9 @@ namespace OOC.Characters
         private void Update()
         {
             if (Body == null)
+                return;
+
+            if (SwitchingBodyTweener.IsActive() && SwitchingBodyTweener.IsComplete() == false)
                 return;
 
             Transform.position = Body.position;
@@ -57,6 +64,7 @@ namespace OOC.Characters
             }
 
             Body = newBody;
+            SwitchingBodyTweener = Transform.DOMove(Body.position, SwitchBodyTime);
 
             var controller = Body.GetComponent<ControllerBase>();
             if (controller != null)
